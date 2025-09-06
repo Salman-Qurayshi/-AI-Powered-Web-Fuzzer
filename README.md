@@ -1,113 +1,71 @@
-# brainstorm
 
-A smarter web fuzzing tool that combines local LLM models (via Ollama) and [ffuf](https://github.com/ffuf/ffuf) to optimize directory and file discovery.
+# AI-Powered Web Fuzzer
 
-I wrote a blog post about the ideas behind this tool: 
-[Brainstorm tool release: Optimizing web fuzzing with local LLMs](https://www.invicti.com/blog/security-labs/brainstorm-tool-release-optimizing-web-fuzzing-with-local-llms/)
-
-## Short Description
-
-Combines traditional web fuzzing techniques with AI-powered path generation to discover hidden endpoints, files, and directories in web applications.
-
-## Screenshot
-![screenshot](screenshot.png)
-
-## Long Description
-
-This tool enhances traditional web fuzzing by using local AI language models (via Ollama) to generate intelligent guesses for potential paths and filenames. It works by:
-
-1. Extracting initial links from the target website
-2. Using AI to analyze the structure and suggest new potential paths
-3. Fuzzing these paths using ffuf
-4. Learning from discoveries to generate more targeted suggestions
-5. Repeat
-
-There are 2 tools:
-- `fuzzer.py`: Main fuzzer focusing on general path discovery
-- `fuzzer_shortname.py`: Specialized variant for short filename discovery (e.g., legacy 8.3 format)
+An intelligent web fuzzer that uses the Google Gemini API to generate targeted wordlists for `ffuf`, iteratively discovering new and hidden file paths on a target website.
 
 ## Prerequisites
 
-- Python 3.6+
-- ffuf (https://github.com/ffuf/ffuf)
-- Ollama (https://ollama.ai)
-- Required Python packages (see requirements.txt)
+Before you begin, ensure you have the following installed on your system:
+* **Python 3.x**
+* **ffuf** - A fast web fuzzer. You can download it from ffuf's GitHub repository.
+* **Git** (optional, but recommended for cloning this repository).
 
-## Local Ollama models
+## Setup
 
-By default, the tool is using the model `qwen2.5-coder:latest`. 
-This model (or other models you want to use) needs to be downloaded first.
+### 1. **Clone the repository** (if you haven't already):
 
-```bash
-ollama pull qwen2.5-coder:latest
-```
+   git clone https://github.com/your-username/your-repository-name.git
+   cd your-repository-name
 
-## Installation
+### 2. **Get a Gemini API Key**:
+  * Go to **Google AI Studio** and log in with your Google account.
+  * Click "Get API key" in the left-hand navigation.
+  * Click "Create API key in new project" and copy the key.
 
-```bash
-# Clone the repository
-git clone https://github.com/Invicti-Security/brainstorm.git
-cd brainstorm
+### 3. **Set the API Key as an Environment Variable**: 
+The script reads your API key from the environment. **Do not hardcode it in the script.** Add the following line to your `~/.bashrc` or `~/.zshrc` file:
 
-# Install Python dependencies
-pip install -r requirements.txt
+   export GOOGLE_API_KEY="your_gemini_api_key_here"
 
-# Ensure ffuf is installed and in your PATH
-# Ensure Ollama is running locally on port 11434
-```
+After adding the line, apply the changes by running:
+
+   source ~/.bashrc
+
+### 4. **Install Python Dependencies**: 
+The script requires the `google-generativeai` and `requests` libraries. Install them using `pip`:
+
+   pip install google-generativeai --break-system-packages
+   pip install requests beautifulsoup4 colorama
+
+### 5. **Review the Prompt File**: 
+The fuzzer uses the prompt in the `prompts/files.txt` file to instruct the AI. This file contains placeholders like `{{initialLinks}}` and `{{serverHeaders}}` that the script replaces at runtime. You can modify this file to improve the AI's suggestions.
 
 ## Usage
 
-### Basic Usage
+Run the `fuzzer.py` script from your terminal, passing your `ffuf` command as a string argument. The script will automatically replace the `-u` and `-w` arguments as it runs.
 
-```bash
-# Basic fuzzing with default settings
-python fuzzer.py "ffuf -w ./fuzz.txt -u http://example.com/FUZZ"
+   python3 fuzzer.py "ffuf -u http://example.com/FUZZ -w wordlist.txt"
 
-# Short filename fuzzing (specify the 8.3 filename as the last parameter)
-python fuzzer_shortname.py "ffuf -w ./fuzz.txt -u http://example.com/FUZZ" "BENCHM~1.PY"
-```
+## Optional Arguments
 
-### Command Line Options
+* `--cycles`: The number of times the fuzzer will run. The default is 50.
+* `--model`: The Gemini model to use. The default is `gemini-1.5-flash`.
+* `--prompt-file`: The path to a custom prompt file.
+* `--status-codes`: A comma-separated list of HTTP status codes to consider a successful hit. The default is `200,301,302,303,307,308,403,401,500`.
+* `--debug`: Enables debug logging, showing the full prompts and AI responses.
 
-#### Main Fuzzer (fuzzer.py)
-```
---debug             Enable debug mode
---cycles N          Number of fuzzing cycles to run (default: 50)
---model NAME        Ollama model to use (default: qwen2.5-coder:latest)
---prompt-file PATH  Path to prompt file (default: prompts/files.txt)
---status-codes LIST Comma-separated list of status codes to consider successful
-                   (default: 200,301,302,303,307,308,403,401,500)
-```
+Example with all arguments:
 
-#### Short Filename Fuzzer (fuzzer_shortname.py)
-```
---debug             Enable debug mode
---cycles N          Number of fuzzing cycles to run (default: 50)
---model NAME        Ollama model to use (default: qwen2.5-coder:latest)
---status-codes LIST Comma-separated list of status codes to consider successful
-```
+   python3 fuzzer.py "ffuf -u http://example.com/FUZZ -w wordlist.txt -H 'User-Agent: my-fuzzer'" --cycles 10 --status-codes 200,403 --debug
 
-### Examples
+## How It Works
 
-```bash
-# Run fuzzing with custom cycles and model
-python fuzzer.py "ffuf -w ./fuzz.txt -u http://target.com/FUZZ" --cycles 100 --model llama2:latest
+1. **Initial Reconnaissance**: The script first scrapes the target URL to discover any public-facing links.
+2. **AI Analysis**: It sends these initial links and the target server's HTTP headers to the Gemini API as a prompt.
+3. **Intelligent Wordlist Generation**: The Gemini model analyzes the provided information and generates a list of new, logical, and contextual file and directory names that might exist on the server.
+4. **Fuzzing**: The script takes the AI-generated list and uses it as a wordlist for `ffuf`, running the command to check for valid URLs.
+5. **Iteration**: If `ffuf` discovers any new links, the process repeats, using the newly found links to inform the AI's next set of suggestions. This allows the fuzzer to "learn" about the target's structure over time, potentially uncovering deeper, harder-to-find paths.
 
-# Run short filename fuzzing targeting a specific file
-python fuzzer_shortname.py "ffuf -w ./fuzz.txt -u http://target.com/FUZZ" "document.pdf" --cycles 25
+## Disclaimer
 
-# Benchmark different models and generate HTML report
-python benchmark.py
-```
-
-## Output
-
-- Discovered paths are saved to `all_links.txt`
-- Short filenames are saved to `all_filenames.txt`
-- Real-time console output shows progress and discoveries
-
-## Benchmarking Ollama LLM models
-
-I've compared the most popular local LLM models, you can find the [results here](https://github.com/Invicti-Security/brainstorm/blob/main/benchmark_report.md).
-# -AI-Powered-Web-Fuzzer
+This tool is intended for educational and ethical security research purposes only. Unauthorized access to computer systems is illegal and unethical. By using this tool, you acknowledge that you are responsible for your actions. Ensure you have explicit permission to test any system you use this tool on.
