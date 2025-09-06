@@ -1,0 +1,8 @@
+mistral:latest
+llama3.1:latest
+llama3.2:latest
+qwen2.5:latest
+qwen2.5-coder:latest
+qwen2.5-coder:14b
+gemma:latest
+phi3:latest

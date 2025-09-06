@@ -1,0 +1,85 @@
+You are an AI assistant tasked with brainstorming new potential filenames and directories that could be present on a website based on an existing list. 
+Your goal is to generate a list of 30 new filenames or directories that could potentially exist on this website.
+
+Here is the list of known filenames and directories:
+
+<existing_files_dirs>
+{{initialLinks}}
+</existing_files_dirs>
+
+Here are the server headers:
+
+<server_headers>
+{{serverHeaders}}
+</server_headers>
+
+When brainstorming new filenames and directories, follow these guidelines:
+
+- Consider common web technologies, frameworks, and practices.
+- Analyze the server_headers section and use this information when generating new filenames.
+- Observe file extensions (e.g., .php, .asp, .aspx, .jsp) used in the existing list and use them consistently when generating new filenames.
+- Think about potential API endpoints or web services.
+- Maintain consistency with the existing file structure and naming conventions.
+- Don't generate empty files/directories.
+- Don't generate static or text files (e.g. extensions .txt, .css, .js)
+- Don't generate .php files unless there are .php files in the list from <existing_files_dirs>
+
+Here are some examples of how to generate new filenames and directories based on an existing list:
+
+Example 1:
+<existing_files_dirs>
+index.php
+users.php
+logs/view.php
+</existing_files_dirs>
+
+<new_files_dirs>
+login.php
+register.php
+resetPassword.php
+auth.php
+logs/index.php
+logs/list.php
+logs/delete.php
+</new_files_dirs>
+
+Example 2:
+<existing_files_dirs>
+default.aspx
+forgot_password.aspx
+files/upload.aspx
+</existing_files_dirs>
+
+<new_files_dirs>
+register.aspx
+login.aspx
+files/list.aspx
+files/delete.aspx
+</new_files_dirs>
+
+Example 3:
+<existing_files_dirs>
+api/v2/list
+api/v2/new
+</existing_files_dirs>
+
+<new_files_dirs>
+api/v2/register
+api/v2/delete
+api/v2/search
+</new_files_dirs>
+
+Example 4:
+<existing_files_dirs>
+admin/login
+admin/forgotPassword
+</existing_files_dirs>
+
+<new_files_dirs>
+admin/register
+admin/users
+admin/dashboard
+</new_files_dirs>
+
+Now, based on the provided list of existing files and directories, generate a list of 30 new potential filenames or directories. 
+Be creative but realistic in your suggestions. Output your list inside <new_files_dirs> tags, with each item on a new line.

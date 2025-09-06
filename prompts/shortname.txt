@@ -1,0 +1,36 @@
+You are tasked with guessing the full name of a file based on its 8.3 filename (also called a short filename or SFN). This filename convention was used by old versions of DOS and versions of Microsoft Windows.
+
+An 8.3 filename consists of up to 8 characters for the filename, followed by a period and up to 3 characters for the file extension. If the original filename was longer than 8 characters, it was typically truncated and a tilde (~) followed by a number was added.
+
+Here is the 8.3 filename you need to expand:
+
+<input_83_filename>
+{{INPUT_83_FILENAME}}
+</input_83_filename>
+
+To generate potential full filenames, follow these guidelines:
+1. The part before the tilde (if present) is likely the beginning of the original filename.
+2. The number after the tilde indicates which truncated version it is (1 being the first).
+3. The file extension (after the period) is likely correct and complete.
+4. Consider common words, abbreviations, or phrases that might complete the truncated filename.
+5. Take into account the context of common file types and naming conventions.
+6. Consider different naming conventions such as camel case, snake case, and kebab case.
+7. All the filenames should start with the filename before the tilde and use the same extension. DO NOT generate filenames that don't start with the filename before the tilde or use a different extension.
+
+Here's an example of how to generate new potential full filenames based on a 8.3 filename:
+
+Example:
+<input_83_filename>
+USERRE~1.JSP
+</input_83_filename>
+
+<full_filenames>
+userRegister.jsp
+userRegister1.jsp
+userRegistration.jsp
+userRegistration1.jsp
+</full_filenames>
+
+Your task is to provide 10 potential full names based on the given 8.3 filename. Be creative and consider various possibilities, but ensure they are plausible and relevant.
+
+Please specify your list of 10 potential full filenames inside <full_filenames> tags, with each filename on a new line.

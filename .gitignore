@@ -1,0 +1,13 @@
+# Python-specific files
+__pycache__/
+*.pyc
+
+# IDE/Editor-specific files
+.vscode/
+.idea/
+
+# Fuzzer-specific output files
+output.json
+links.txt
+all_links.txt
+fuzzer_shortname.py
