@@ -13,10 +13,10 @@ Before you begin, ensure you have the following installed on your system:
 ## Setup
 
 ### 1. **Clone the repository** (if you haven't already):
-
-   git clone https://github.com/your-username/your-repository-name.git
+```
+   https://github.com/Salman-Qurayshi/-AI-Powered-Web-Fuzzer.git
    cd your-repository-name
-
+```
 ### 2. **Get a Gemini API Key**:
   * Go to **Google AI Studio** and log in with your Google account.
   * Click "Get API key" in the left-hand navigation.
@@ -24,18 +24,24 @@ Before you begin, ensure you have the following installed on your system:
 
 ### 3. **Set the API Key as an Environment Variable**: 
 The script reads your API key from the environment. **Do not hardcode it in the script.** Add the following line to your `~/.bashrc` or `~/.zshrc` file:
-
-   export GOOGLE_API_KEY="your_gemini_api_key_here"
+```
+   echo 'export GOOGLE_API_KEY="your_gemini_api_key_here"' >> ~/bashrc 
+```
+>  OR ~/.zshrc if your shell is that
+> yyou can check with `echo $SHELL`
 
 After adding the line, apply the changes by running:
-
+```
    source ~/.bashrc
+```
+> or .zshrc
 
 ### 4. **Install Python Dependencies**: 
 The script requires the `google-generativeai` and `requests` libraries. Install them using `pip`:
-
+```
    pip install google-generativeai --break-system-packages
    pip install requests beautifulsoup4 colorama
+```
 
 ### 5. **Review the Prompt File**: 
 The fuzzer uses the prompt in the `prompts/files.txt` file to instruct the AI. This file contains placeholders like `{{initialLinks}}` and `{{serverHeaders}}` that the script replaces at runtime. You can modify this file to improve the AI's suggestions.
@@ -43,8 +49,9 @@ The fuzzer uses the prompt in the `prompts/files.txt` file to instruct the AI. T
 ## Usage
 
 Run the `fuzzer.py` script from your terminal, passing your `ffuf` command as a string argument. The script will automatically replace the `-u` and `-w` arguments as it runs.
-
+```
    python3 fuzzer.py "ffuf -u http://example.com/FUZZ -w wordlist.txt"
+```
 
 ## Optional Arguments
 
@@ -55,8 +62,10 @@ Run the `fuzzer.py` script from your terminal, passing your `ffuf` command as a 
 * `--debug`: Enables debug logging, showing the full prompts and AI responses.
 
 Example with all arguments:
-
+```
    python3 fuzzer.py "ffuf -u http://example.com/FUZZ -w wordlist.txt -H 'User-Agent: my-fuzzer'" --cycles 10 --status-codes 200,403 --debug
+```
+
 
 ## How It Works
 
