@@ -3,7 +3,7 @@
 
 An intelligent web fuzzer that uses the Google Gemini API to generate targeted wordlists for `ffuf`, iteratively discovering new and hidden file paths on a target website.
 
-Acknowledgments
+### Acknowledgments
 This project is a modified version of the original Brainstorm tool developed by Invicti Security. The original tool was designed to use a local LLM (Ollama), but this version has been adapted to leverage the powerful and free-tier Google Gemini API.
 
 Real credit for the core concept and original codebase goes to the Invicti Security team.
